@@ -173,62 +173,11 @@ Python代码
 Google发布了新的TensorFlow物体检测API，包含了预训练模型，一个发布模型的jupyter notebook，一些可用于使用自己数据集对模型进行重新训练的有用脚本。
 使用该API可以快速的构建一些图片中物体检测的应用。这里我们一步一步来看如何使用预训练模型来检测图像中的物体。
 首先我们载入一些会使用的库
-[python] view plain copy
-1. import numpy as np  
-2. import os  
-3. import six.moves.urllib as urllib  
-4. import sys  
-5. import tarfile  
-6. import tensorflow as tf  
-7. import zipfile  
-8.   
-9. from collections import defaultdict  
-10. from io import StringIO  
-11. from matplotlib import pyplot as plt  
-12. from PIL import Image  
-
-
 接下来进行环境设置
-[python] view plain copy
-1. %matplotlib inline  
-2. sys.path.append("..")  
 物体检测载入
-[python] view plain copy
-1. from utils import label_map_util  
-2.   
-3. from utils import visualization_utils as vis_util  
 准备模型
 变量  任何使用export_inference_graph.py工具输出的模型可以在这里载入，只需简单改变PATH_TO_CKPT指向一个新的.pb文件。这里我们使用“移动网SSD”模型。
-[python] view plain copy
-1. MODEL_NAME = 'ssd_mobilenet_v1_coco_11_06_2017'  
-2. MODEL_FILE = MODEL_NAME + '.tar.gz'  
-3. DOWNLOAD_BASE = 'http://download.tensorflow.org/models/object_detection/'  
-4.   
-5. PATH_TO_CKPT = MODEL_NAME + '/frozen_inference_graph.pb'  
-6.   
-7. PATH_TO_LABELS = os.path.join('data', 'mscoco_label_map.pbtxt')  
-8.   
-9. NUM_CLASSES = 90  
 下载模型
-[python] view plain copy
-1. opener = urllib.request.URLopener()  
-2. opener.retrieve(DOWNLOAD_BASE + MODEL_FILE, MODEL_FILE)  
-3. tar_file = tarfile.open(MODEL_FILE)  
-4. for file in tar_file.getmembers():  
-5.     file_name = os.path.basename(file.name)  
-6.     if 'frozen_inference_graph.pb' in file_name:  
-7.         tar_file.extract(file, os.getcwd())  
-将（frozen）TensorFlow模型载入内存
-[python] view plain copy
-1. detection_graph = tf.Graph()  
-2. with detection_graph.as_default():  
-3.     od_graph_def = tf.GraphDef()  
-4.     with tf.gfile.GFile(PATH_TO_CKPT, 'rb') as fid:  
-5.         serialized_graph = fid.read()  
-6.         od_graph_def.ParseFromString(serialized_graph)  
-7.         tf.import_graph_def(od_graph_def, name='')  
-
-
 载入标签图
 标签图将索引映射到类名称，当我们的卷积预测5时，我们知道它对应飞机。这里我们使用内置函数，但是任何返回将整数映射到恰当字符标签的字典都适用。
 在载入模型部分可以尝试不同的侦测模型以比较速度和准确度，将你想侦测的图片放入TEST_IMAGE_PATHS中运行即可。
@@ -239,8 +188,8 @@ Google发布了新的TensorFlow物体检测API，包含了预训练模型，一�
 从ImageNet中取一张图2008_004037.jpg测试，然后把 object_detection_tutorial.ipynb 里的代码改成可直接运行代码 
 
 Shell代码  
-1. vi object_detect_demo.py  
-2. python object_detect_demo.py  
+vi object_detect_demo.py  
+python object_detect_demo.py  
 
 Python代码（略）  
 
@@ -251,22 +200,22 @@ Python代码（略）  
 1）数据集 转换 TFRecord格式
 将jpg图片数据转换成TFRecord数据。 
 Shell代码  
-1. cd /usr/local/tensorflow2/tensorflow-models/object_detection  
-2. wget http://www.robots.ox.ac.uk/~vgg/data/pets/data/images.tar.gz  
-3. wget http://www.robots.ox.ac.uk/~vgg/data/pets/data/annotations.tar.gz  
-4. tar -zxvf annotations.tar.gz  
-5. tar -zxvf images.tar.gz  
-6. python create_pet_tf_record.py --data_dir=`pwd` --output_dir=`pwd`  
+cd /usr/local/tensorflow2/tensorflow-models/object_detection  
+wget http://www.robots.ox.ac.uk/~vgg/data/pets/data/images.tar.gz  
+wget http://www.robots.ox.ac.uk/~vgg/data/pets/data/annotations.tar.gz  
+tar -zxvf annotations.tar.gz  
+tar -zxvf images.tar.gz  
+python create_pet_tf_record.py --data_dir=`pwd` --output_dir=`pwd`  
 images里全是已经标记好的jpg图片。执行完成后，会在当前目录下生成2个文件：pet_train.record、pet_val.record。 
 
 
 2）配置pipeline 
 在object_detection/samples下有各种模型的通道配置，复制一份出来用。 
 Shell代码  
-1. // wget http://download.tensorflow.org/models/object_detection/faster_rcnn_resnet101_coco_11_06_2017.tar.gz  
-2. // tar -zxvf faster_rcnn_resnet101_coco_11_06_2017.tar.gz  
-3. cp samples/configs/faster_rcnn_resnet101_pets.config mypet.config  
-4. vi mypet.config  
+// wget http://download.tensorflow.org/models/object_detection/faster_rcnn_resnet101_coco_11_06_2017.tar.gz  
+// tar -zxvf faster_rcnn_resnet101_coco_11_06_2017.tar.gz  
+cp samples/configs/faster_rcnn_resnet101_pets.config mypet.config  
+vi mypet.config  
 
 修改PATH_TO_BE_CONFIGURED、训练steps、fine_tune_checkpoint
 
@@ -280,24 +229,17 @@ https://github.com/tensorflow/models/blob/master/object_detection/g3doc/detectio
 
 3）训练评估 
 Shell代码  
-1. mkdir -p /usr/local/tensorflow2/tensorflow-models/object_detection/model/train  
-2. mkdir -p /usr/local/tensorflow2/tensorflow-models/object_detection/model/eval  
+mkdir -p /usr/local/tensorflow2/tensorflow-models/object_detection/model/train  
+mkdir -p /usr/local/tensorflow2/tensorflow-models/object_detection/model/eval  
 
 
 -- 训练 -- 
 Shell代码  
-1. python object_detection/train.py \  
-2.      --logtostderr \  
-3.      --pipeline_config_path='/usr/local/tensorflow2/tensorflow-models/object_detection/mypet.config' \  
-4.      --train_dir='/usr/local/tensorflow2/tensorflow-models/object_detection/model/train'  
+python object_detection/train.py --logtostderr --pipeline_config_path='/usr/local/tensorflow2/tensorflow-models/object_detection/mypet.config' --train_dir='/usr/local/tensorflow2/tensorflow-models/object_detection/model/train'  
 
 -- 评估 -- 
 Shell代码  
-1. python object_detection/eval.py \  
-2.     --logtostderr \  
-3.     --pipeline_config_path='/usr/local/tensorflow2/tensorflow-models/object_detection/mypet.config' \  
-4.     --checkpoint_dir='/usr/local/tensorflow2/tensorflow-models/object_detection/model/train' \  
-5.     --eval_dir='/usr/local/tensorflow2/tensorflow-models/object_detection/model/eval'  
+python object_detection/eval.py --logtostderr --pipeline_config_path='/usr/local/tensorflow2/tensorflow-models/object_detection/mypet.config' --checkpoint_dir='/usr/local/tensorflow2/tensorflow-models/object_detection/model/train' --eval_dir='/usr/local/tensorflow2/tensorflow-models/object_detection/model/eval'  
 
 eval文件夹下会生成以下文件，一个文件对应一个image： 
 events.out.tfevents.1499152949.localhost.localdomain 
@@ -306,7 +248,7 @@ events.out.tfevents.1499152980.localhost.localdomain
 
 -- 查看结果 -- 
 Shell代码  
-1. tensorboard --logdir=/usr/local/tensorflow/tensorflow-models/object_detection/model/  
+tensorboard --logdir=/usr/local/tensorflow/tensorflow-models/object_detection/model/  
 
  train和eval执行后直到终止命令前一直运行 
  训练、评估、查看可以开3个终端分别同时运行 
