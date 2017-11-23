@@ -103,7 +103,7 @@ echo $PYTHONPATH
 //自己用户的~/.bash_profile中配置,以后python就会自动找到你编写的python模块了
 vi ~/.bash_profile
 
-#python_tensorflow_models
+python_tensorflow_models
 export PYTHONPATH=$PYTHONPATH:/Users/wangyezzz/GitHub/models/research:/Users/wangyezzz/GitHub/models/research/slim
 
 //生效
@@ -141,7 +141,7 @@ http://127.0.0.1:8888/notebooks/object_detection_tutorial.ipynb
 
 默认是处理 object_detection/test_images 文件夹下的image1.jpg、image2.jpg，如果想识别其他图像可以把倒数第二个Cell的代码修改一下： 
 Python代码  
-1. # TEST_IMAGE_PATHS = [ os.path.join(PATH_TO_TEST_IMAGES_DIR, 'image{}.jpg'.format(i)) for i in range(1, 3) ]  
+1. TEST_IMAGE_PATHS = [ os.path.join(PATH_TO_TEST_IMAGES_DIR, 'image{}.jpg'.format(i)) for i in range(1, 3) ]  
 2. TEST_IMAGE_PATHS = ['<your image path>']  
 
 
@@ -152,7 +152,7 @@ Python代码
 
 -> 
 Python代码  
-1. print(image_path.split('.')[0]+'_labeled.jpg') # Add  
+1. print(image_path.split('.')[0]+'_labeled.jpg') Add  
 2. plt.figure(figsize=IMAGE_SIZE, dpi=300) # Modify  
 3. plt.imshow(image_np)  
 4. plt.savefig(image_path.split('.')[0] + '_labeled.jpg') # Add  
@@ -164,10 +164,6 @@ Python代码
 
 
 执行完成后在object_detection/test_images 文件夹下就能看到结果图了。 
-image1_labeled.jpg 
-image2_labeled.jpg 
-
-
 
 比较一下官方提供的检测结果图，可见和机器于很大关系： 
 
@@ -243,8 +239,8 @@ Google发布了新的TensorFlow物体检测API，包含了预训练模型，一�
 从ImageNet中取一张图2008_004037.jpg测试，然后把 object_detection_tutorial.ipynb 里的代码改成可直接运行代码 
 
 Shell代码  
-1. # vi object_detect_demo.py  
-2. # python object_detect_demo.py  
+1. vi object_detect_demo.py  
+2. python object_detect_demo.py  
 
 Python代码（略）  
 
@@ -255,12 +251,12 @@ Python代码（略）  
 1）数据集 转换 TFRecord格式
 将jpg图片数据转换成TFRecord数据。 
 Shell代码  
-1. # cd /usr/local/tensorflow2/tensorflow-models/object_detection  
-2. # wget http://www.robots.ox.ac.uk/~vgg/data/pets/data/images.tar.gz  
-3. # wget http://www.robots.ox.ac.uk/~vgg/data/pets/data/annotations.tar.gz  
-4. # tar -zxvf annotations.tar.gz  
-5. # tar -zxvf images.tar.gz  
-6. # python create_pet_tf_record.py --data_dir=`pwd` --output_dir=`pwd`  
+1. cd /usr/local/tensorflow2/tensorflow-models/object_detection  
+2. wget http://www.robots.ox.ac.uk/~vgg/data/pets/data/images.tar.gz  
+3. wget http://www.robots.ox.ac.uk/~vgg/data/pets/data/annotations.tar.gz  
+4. tar -zxvf annotations.tar.gz  
+5. tar -zxvf images.tar.gz  
+6. python create_pet_tf_record.py --data_dir=`pwd` --output_dir=`pwd`  
 images里全是已经标记好的jpg图片。执行完成后，会在当前目录下生成2个文件：pet_train.record、pet_val.record。 
 
 
@@ -269,13 +265,13 @@ images里全是已经标记好的jpg图片。执行完成后，会在当前目�
 Shell代码  
 1. // wget http://download.tensorflow.org/models/object_detection/faster_rcnn_resnet101_coco_11_06_2017.tar.gz  
 2. // tar -zxvf faster_rcnn_resnet101_coco_11_06_2017.tar.gz  
-3. # cp samples/configs/faster_rcnn_resnet101_pets.config mypet.config  
-4. # vi mypet.config  
+3. cp samples/configs/faster_rcnn_resnet101_pets.config mypet.config  
+4. vi mypet.config  
 
 修改PATH_TO_BE_CONFIGURED、训练steps、fine_tune_checkpoint
 
 第一种： 
- # fine_tune_checkpoint: "PATH_TO_BE_CONFIGURED/model.ckpt"
+ //# fine_tune_checkpoint: "PATH_TO_BE_CONFIGURED/model.ckpt"
   from_detection_checkpoint: false
 第二种：
 from_detection_checkpoint设置为true，fine_tune_checkpoint需要设置检查点的路径。采用别人训练出来的checkpoint可以减少训练时间。 
@@ -284,20 +280,20 @@ https://github.com/tensorflow/models/blob/master/object_detection/g3doc/detectio
 
 3）训练评估 
 Shell代码  
-1. # mkdir -p /usr/local/tensorflow2/tensorflow-models/object_detection/model/train  
-2. # mkdir -p /usr/local/tensorflow2/tensorflow-models/object_detection/model/eval  
+1. mkdir -p /usr/local/tensorflow2/tensorflow-models/object_detection/model/train  
+2. mkdir -p /usr/local/tensorflow2/tensorflow-models/object_detection/model/eval  
 
 
 -- 训练 -- 
 Shell代码  
-1. # python object_detection/train.py \  
+1. python object_detection/train.py \  
 2.      --logtostderr \  
 3.      --pipeline_config_path='/usr/local/tensorflow2/tensorflow-models/object_detection/mypet.config' \  
 4.      --train_dir='/usr/local/tensorflow2/tensorflow-models/object_detection/model/train'  
 
 -- 评估 -- 
 Shell代码  
-1. # python object_detection/eval.py \  
+1. python object_detection/eval.py \  
 2.     --logtostderr \  
 3.     --pipeline_config_path='/usr/local/tensorflow2/tensorflow-models/object_detection/mypet.config' \  
 4.     --checkpoint_dir='/usr/local/tensorflow2/tensorflow-models/object_detection/model/train' \  
@@ -310,13 +306,13 @@ events.out.tfevents.1499152980.localhost.localdomain
 
 -- 查看结果 -- 
 Shell代码  
-1. # tensorboard --logdir=/usr/local/tensorflow/tensorflow-models/object_detection/model/  
+1. tensorboard --logdir=/usr/local/tensorflow/tensorflow-models/object_detection/model/  
 
-*** train和eval执行后直到终止命令前一直运行 
-*** 训练、评估、查看可以开3个终端分别同时运行 
+ train和eval执行后直到终止命令前一直运行 
+ 训练、评估、查看可以开3个终端分别同时运行 
 
 
-# 视频物体识别
+# 三、视频物体识别
 谷歌在github上公布了此项目的完整代码，接下来我们将在现有代码基础上添加相应模块实现对于视频中物体的识别。
 
 第一步：下载opencv的cv2包
