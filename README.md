@@ -22,7 +22,8 @@ Anaconda 提供一个管理工具  conda ，可以把  conda 看作是  pip +  v
 - source deactivate    //关闭“当前tensorflow”环境
 
 # 二、Object Detection for Mac 使用
-0、环境准备
+
+* 0、环境准备
 https://github.com/tensorflow/models/tree/master/research/object_detection
 Tensorflow对象检测API依赖于以下项： 
 - Protobuf 2.6 
@@ -33,18 +34,18 @@ Tensorflow对象检测API依赖于以下项：
 - Matplotlib 
 - Tensorflow 
 
-以下是安装步骤： 
-1、TensorFlow > 1.0 安装或更新
+以下是安装步骤：
+
+* 1、TensorFlow > 1.0 安装或更新
 我是pip安装的tensorflow1.2版本，1以下版本好像不兼容该API，命令如下： 
 sudo pip install –upgrade  
 https://storage.googleapis.com/tensorflow/linux/cpu/tensorflow-1.2.1-cp27-cp27mu-manylinux1_x86_64.whl
 
-//一定要先更新tensorflow-1.3，1.0版本会报错InvalidArgumentError
-//InvalidArgumentError: NodeDef mentions attr 'data_format'
+一定要先更新tensorflow-1.3，1.0版本会报错InvalidArgumentError: NodeDef mentions attr 'data_format'
 sudo pip install __upgrade tensorflow
 
 
-2、Object Detection model下载
+* 2、Object Detection model下载
 Tensorflow Object Detection API的model是在guthub上下载 https://github.com/tensorflow/models ，并解压
 
 //切换目录到tensorflow／models／research
